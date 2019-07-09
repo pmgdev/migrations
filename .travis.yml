@@ -1,0 +1,12 @@
+sudo: required
+
+language: php
+
+php:
+  - 7.3
+
+install:
+  - composer install --no-interaction --prefer-dist --no-scripts --no-progress --no-suggest
+
+script:
+  - make ci

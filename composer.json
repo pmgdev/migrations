@@ -1,0 +1,62 @@
+{
+    "name": "pmgdev/migrations",
+    "type": "library",
+    "description": "SQL migrations",
+    "homepage": "https://github.com/pmgdev/migrations",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Svatopluk Hastík",
+            "email": "svatopluk.hastik@csfd.cz",
+            "role": "Developer"
+        },
+        {
+            "name": "Dominik Klapuch",
+            "email": "dominik.klapuch@csfd.cz",
+            "role": "Developer"
+        },
+        {
+            "name": "Milan Matějček",
+            "email": "milan.matejcek@csfd.cz",
+            "role": "Developer"
+        },
+        {
+            "name": "Jakub Trmota",
+            "email": "jakub.trmota@csfd.cz",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.3",
+        "symfony/console": "^4.3",
+        "nette/utils": "^2.4|^3.0",
+        "h4kuna/memoize": "^0.0.1",
+        "nette/neon": "^2.4|^3.0",
+        "nette/finder": "^2.4",
+        "pmgdev/psql-cli": "^0.0.1",
+        "pmgdev/git-cli": "^0.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PmgDev\\Migrations\\": "src"
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.11.12",
+        "phpstan/phpstan-strict-rules": "^0.11.1",
+        "jakub-onderka/php-parallel-lint": "^1.0"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/pmgdev/psql-cli.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/pmgdev/git-cli.git"
+        }
+    ],
+    "bin": [
+        "bin/pmgdev-migrations"
+    ]
+}

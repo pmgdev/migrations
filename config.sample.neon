@@ -1,0 +1,17 @@
+parameters:
+	projectDir: /home/someone/Projects/csfd # This is where is your .git directory
+	sqlUtility: /usr/bin/psql # psql used for all the SQL - including import
+	dumpUtility: /usr/bin/pg_dump # used for export
+	migrationsDir: /home/someone/Projects/csfd/db/migrations/ # Directory where are all the migrations
+	structureFilename: /home/someone/Projects/csfd/db/structure.sql # structure.sql file where is located whole database schema without data
+	updateScript: /home/someone/Projects/csfd/tools/update-db-structure.php # file to run for update DB
+	credentials:
+		main:
+			host: 127.0.0.1
+			port: 5432
+			dbname: csfd
+			username: csfd
+			password: csfd
+		test:
+			host: 127.0.0.2
+			port: 5433
