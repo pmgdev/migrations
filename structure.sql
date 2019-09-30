@@ -14,50 +14,28 @@ CREATE UNIQUE INDEX deployed_scripts_filename_ukey ON system.deployed_scripts (l
 
 ---
 
-CREATE FUNCTION system.deploy_script(in_filename text, in_dependence text[] DEFAULT array[]::text[])
+CREATE FUNCTION system.deploy_script(in_filename text, in_dependence text[] DEFAULT NULL)
   RETURNS void AS
 $BODY$
 DECLARE
-  dependence record;
+  v_dependence text;
 BEGIN
-  IF (EXISTS(SELECT 1 FROM system.deployed_scripts WHERE lower(filename) = lower(in_filename))) THEN
+  IF EXISTS (SELECT 1 FROM system.deployed_scripts WHERE lower(filename) = lower(in_filename)) THEN
     RAISE EXCEPTION USING MESSAGE = format('Script "%s" is already deployed.', in_filename);
   END IF;
 
   IF in_dependence IS NOT NULL THEN
-    FOR dependence IN SELECT unnest(in_dependence) AS filename LOOP
-      IF (NOT EXISTS(SELECT 1 FROM system.deployed_scripts WHERE lower(filename) = lower(dependence.filename))) THEN
-        RAISE EXCEPTION USING MESSAGE = format('Script "%s" needs script "%s" deployed.', in_filename, dependence.filename);
+    FOREACH v_dependence IN ARRAY in_dependence LOOP
+      IF NOT EXISTS (SELECT 1 FROM system.deployed_scripts WHERE lower(filename) = lower(v_dependence)) THEN
+        RAISE EXCEPTION USING MESSAGE = format('Script "%s" needs script "%s" to be deployed.', in_filename, v_dependence);
       END IF;
     END LOOP;
   END IF;
 
-  INSERT INTO system.deployed_scripts(filename) VALUES(in_filename);
+  INSERT INTO system.deployed_scripts(filename) VALUES (in_filename);
 END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
-
----
-
-CREATE FUNCTION system.list_deployed_scripts()
-  RETURNS TABLE(script_filename text) AS
-$BODY$
-  SELECT filename FROM system.deployed_scripts;
-$BODY$
-  LANGUAGE sql STABLE;
-
----
-
-CREATE FUNCTION system.list_deployed_scripts(in_filenames text)
-  RETURNS text AS
-$BODY$
-  SELECT string_agg(filenames.filename, ',' ORDER BY filenames.filename) FROM (
-    SELECT unnest(string_to_array(trim(TRAILING ',' FROM in_filenames), ','))
-    EXCEPT
-    SELECT filename FROM system.deployed_scripts
-  ) AS filenames(filename);
-$BODY$
-  LANGUAGE sql STABLE;
 
 ---
 

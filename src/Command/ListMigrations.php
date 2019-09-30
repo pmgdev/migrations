@@ -65,8 +65,8 @@ final class ListMigrations extends Command\Command
 		foreach (Utils\Finder::findFiles('*.sql')->from($this->migrationsDir) as $file) {
 			$files[$file->getRealPath()] = $file->getFilename();
 		}
-		[, , $record] = $this->psql->sql(sprintf("SELECT system.list_deployed_scripts('%s')", implode(',', $files)));
-		return array_intersect($files, explode(',', trim($record)));
+		asort($files);
+		return array_diff($files, array_map('trim', array_slice($this->psql->sql('SELECT filename FROM system.deployed_scripts'), 2, -2)));
 	}
 
 }
