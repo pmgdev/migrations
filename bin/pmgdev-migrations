@@ -21,6 +21,7 @@ if (is_file(__DIR__ . '/../../autoload.php')) {
 		new Migrations\Command\CreateMigration(),
 		new Migrations\Command\ListMigrations(),
 		new Migrations\Command\CompareActualStructure(),
+		new Migrations\Command\RunMigrations(),
 	]);
 	$application->run();
 })();
