@@ -34,8 +34,11 @@ final class Config
 	}
 
 
-	private static function validate(array $parameters): array
+	private static function validate(?array $parameters): array
 	{
+		if ($parameters === NULL) {
+			throw new \RuntimeException('Content of file is empty. Use config.sample.neon as template.');
+		}
 		if (!is_dir($parameters['projectDir'])) {
 			throw new \RuntimeException(sprintf('projectDir "%s" does not exist', $parameters['projectDir']));
 		}
