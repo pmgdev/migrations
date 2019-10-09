@@ -17,9 +17,10 @@ final class CompareStructure extends Command\Command
 	use MemoryStorage;
 
 	private const MASTER_DB = 'pmg_compare_master';
+	private const MASTER_DB_FILE = self::MASTER_DB . '.sql';
 	private const HEAD_DB  = 'pmg_compare_head';
-	private const TEMP_HEAD = 'pmg_temp_head.sql';
-	private const TEMP_MIGRATION = 'pmg_temp_migration.sql';
+	private const TEMP_HEAD_FILE = 'pmg_temp_head.sql';
+	private const TEMP_MIGRATION_FILE = 'pmg_temp_migration.sql';
 
 	/** @var string */
 	private $structureFilename;
@@ -82,7 +83,7 @@ final class CompareStructure extends Command\Command
 	private function executeHead(Output\OutputInterface $output): string
 	{
 		$output->writeln('<info>HEAD</info>');
-		$newSqlFile = $this->tempDir . DIRECTORY_SEPARATOR . self::TEMP_HEAD;
+		$newSqlFile = $this->tempDir . DIRECTORY_SEPARATOR . self::TEMP_HEAD_FILE;
 		$this->importSqlStructureHead($output);
 		$this->exportStructure($output, $newSqlFile, $this->headConnectionConfig());
 		return $newSqlFile;
@@ -151,7 +152,7 @@ final class CompareStructure extends Command\Command
 		$output->writeln(sprintf('Used commit id: %s', $commitId));
 
 		$command = $this->git->show(sprintf('%s:%s', $commitId, $this->projectRelative($this->structureFilename)));
-		$oldDatabaseStructure = $this->tempDir . DIRECTORY_SEPARATOR . self::MASTER_DB;
+		$oldDatabaseStructure = $this->tempDir . DIRECTORY_SEPARATOR . self::MASTER_DB_FILE;
 		if (@file_put_contents($oldDatabaseStructure, $command) === FALSE) {
 			throw new \RuntimeException(sprintf('Can not write content to file %s', $oldDatabaseStructure));
 		}
@@ -187,7 +188,7 @@ final class CompareStructure extends Command\Command
 		}
 
 		if ($sql !== '') {
-			$migrationFile = $this->tempDir . DIRECTORY_SEPARATOR . self::TEMP_MIGRATION;
+			$migrationFile = $this->tempDir . DIRECTORY_SEPARATOR . self::TEMP_MIGRATION_FILE;
 			if (@file_put_contents($migrationFile, $sql) === FALSE) {
 				throw new \RuntimeException(sprintf('Can not write to %s', $migrationFile));
 			}
