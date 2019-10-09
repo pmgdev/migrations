@@ -18,9 +18,10 @@ final class CompareActualStructure extends Command\Command
 	private $tempDir;
 
 
-	public function __construct()
+	public function __construct(?string $tempDir = NULL)
 	{
-		$this->tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'pmg-migrations-csa';
+		$tempDir = rtrim($tempDir ?? sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+		$this->tempDir = $tempDir . DIRECTORY_SEPARATOR . 'pmg-migrations-csa';
 		parent::__construct('compare-structure:actual');
 	}
 

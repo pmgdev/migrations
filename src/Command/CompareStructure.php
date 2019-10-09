@@ -37,9 +37,10 @@ final class CompareStructure extends Command\Command
 	private $git;
 
 
-	public function __construct()
+	public function __construct(?string $tempDir = NULL)
 	{
-		$this->tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'pmg-migrations-cs';
+		$tempDir = rtrim($tempDir ?? sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+		$this->tempDir = $tempDir . DIRECTORY_SEPARATOR . 'pmg-migrations-cs';
 		parent::__construct('compare-structure');
 	}
 
