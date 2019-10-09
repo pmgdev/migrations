@@ -219,7 +219,7 @@ final class CompareStructure extends Command\Command
 			$output->writeln($execOut);
 			return 1;
 		}
-		$output->writeln('<bg=green;fg=white>[OK] SQL structure matches in this branch.</>');
+		$output->writeln('<info>[OK] SQL structure matches in this branch.</info>');
 		return 0;
 	}
 
