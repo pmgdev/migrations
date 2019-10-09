@@ -29,8 +29,7 @@ final class Config
 			if ($content === FALSE) {
 				throw new \RuntimeException(sprintf('Config "%s" is not readable.', $this->filename));
 			}
-			['parameters' => $parameters] = Neon::decode($content);
-			return self::validate($parameters);
+			return self::validate(Neon::decode($content));
 		});
 	}
 
