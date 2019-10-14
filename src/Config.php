@@ -28,20 +28,20 @@ final class Config
 	}
 
 
-	private static function merge(string $filename): array
+	private static function merge(?string $filename): array
 	{
 		$main = self::load($filename);
 		$configs = [$main];
 		foreach ($main['includes'] ?? [] as $include) {
 			if (is_file($include)) {
 				$configs[] = self::load($include);
-			} else if (is_file(dirname($filename) . DIRECTORY_SEPARATOR . $include)) {
+			} else if ($filename !== NULL && is_file(dirname($filename) . DIRECTORY_SEPARATOR . $include)) {
 				$configs[] = self::load(dirname($filename) . DIRECTORY_SEPARATOR . $include);
 			} else {
 				$configs[] = self::load($include);
 			}
 		}
-		return array_replace_recursive([], ...$configs);
+		return array_replace_recursive([], ...$configs) ?? [];
 	}
 
 
