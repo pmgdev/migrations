@@ -21,24 +21,45 @@ final class Config
 
 	public function parameters(): array
 	{
-		return $this->memoize(__FUNCTION__, function (): array {
-			if ($this->filename === NULL || $this->filename === '') {
-				throw new \RuntimeException('Config must be specified');
-			}
-			$content = @file_get_contents($this->filename);
-			if ($content === FALSE) {
-				throw new \RuntimeException(sprintf('Config "%s" is not readable.', $this->filename));
-			}
-			return self::validate(Neon::decode($content));
+		return $this->memoize([__FUNCTION__, $this->filename], function (): array {
+			['parameters' => $parameters] = self::merge($this->filename);
+			return self::validate($parameters);
 		});
 	}
 
 
-	private static function validate(?array $parameters): array
+	private static function merge(string $filename): array
 	{
-		if ($parameters === NULL) {
-			throw new \RuntimeException('Content of file is empty. Use config.sample.neon as template.');
+		$main = self::load($filename);
+		$configs = [$main];
+		foreach ($main['includes'] ?? [] as $include) {
+			if (is_file($include)) {
+				$configs[] = self::load($include);
+			} else if (is_file(dirname($filename) . DIRECTORY_SEPARATOR . $include)) {
+				$configs[] = self::load(dirname($filename) . DIRECTORY_SEPARATOR . $include);
+			} else {
+				$configs[] = self::load($filename);
+			}
 		}
+		return array_replace_recursive(...$configs);
+	}
+
+
+	private static function load(?string $filename): array
+	{
+		if ($filename === NULL || $filename === '') {
+			throw new \RuntimeException('Config must be specified');
+		}
+		$content = @file_get_contents($filename);
+		if ($content === FALSE) {
+			throw new \RuntimeException(sprintf('Config "%s" is not readable.', $filename));
+		}
+		return Neon::decode($content);
+	}
+
+
+	private static function validate(array $parameters): array
+	{
 		if (!is_dir($parameters['projectDir'])) {
 			throw new \RuntimeException(sprintf('projectDir "%s" does not exist', $parameters['projectDir']));
 		}
