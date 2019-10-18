@@ -4,6 +4,7 @@ namespace PmgDev\Migrations\Command;
 
 use h4kuna\Memoize\MemoryStorage;
 use Nette\Utils;
+use PmgDev\Migrations\Exceptions\ReadWriteException;
 use PmgDev\PsqlCli;
 use PmgDev\GitCli;
 use PmgDev\Migrations\Config;
@@ -154,7 +155,7 @@ final class CompareStructure extends Command\Command
 		$command = $this->git->show(sprintf('%s:%s', $commitId, $this->projectRelative($this->structureFilename)));
 		$oldDatabaseStructure = $this->tempDir . DIRECTORY_SEPARATOR . self::MASTER_DB_FILE;
 		if (@file_put_contents($oldDatabaseStructure, $command) === FALSE) {
-			throw new \RuntimeException(sprintf('Can not write content to file %s', $oldDatabaseStructure));
+			throw new ReadWriteException(sprintf('Can not write content to file %s', $oldDatabaseStructure));
 		}
 		$output->writeln(sprintf('Import database structure from master: %s', $oldDatabaseStructure));
 		$this->psql->sql($oldDatabaseStructure, $this->masterConnectionConfig());
@@ -166,7 +167,7 @@ final class CompareStructure extends Command\Command
 	{
 		$content = @file_get_contents($file);
 		if ($content === FALSE) {
-			throw new \RuntimeException(sprintf('Can not read from file %s', $file));
+			throw new ReadWriteException(sprintf('Can not read from file %s', $file));
 		}
 		$dml = [];
 		$clear = preg_replace_callback('/^(?:INSERT|SELECT|DELETE|UPDATE|WITH) .+;/sUm', static function (array $find) use (&$dml): string {
@@ -190,7 +191,7 @@ final class CompareStructure extends Command\Command
 		if ($sql !== '') {
 			$migrationFile = $this->tempDir . DIRECTORY_SEPARATOR . self::TEMP_MIGRATION_FILE;
 			if (@file_put_contents($migrationFile, $sql) === FALSE) {
-				throw new \RuntimeException(sprintf('Can not write to %s', $migrationFile));
+				throw new ReadWriteException(sprintf('Can not write to %s', $migrationFile));
 			}
 			$this->psql->sql($migrationFile, $this->masterConnectionConfig());
 		}

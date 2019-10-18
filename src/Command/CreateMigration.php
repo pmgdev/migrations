@@ -4,6 +4,7 @@ namespace PmgDev\Migrations\Command;
 
 use Nette\Utils;
 use PmgDev\Migrations\Config;
+use PmgDev\Migrations\Exceptions\InvalidOptionException;
 use PmgDev\Migrations\Factory;
 use Symfony\Component\Console\Command;
 use Symfony\Component\Console\Input;
@@ -77,7 +78,7 @@ final class CreateMigration extends Command\Command
 		$helper = $this->getHelper('question');
 		$question = new Question\ConfirmationQuestion(sprintf('Do you want to use GIT branch name "%s"? [Y/n] ', $name), TRUE);
 		if (!$helper->ask($input, $output, $question)) {
-			throw new \RuntimeException('You must specify migration name');
+			throw new InvalidOptionException('You must specify migration name');
 		}
 		return $name;
 	}

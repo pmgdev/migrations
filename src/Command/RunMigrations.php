@@ -50,7 +50,7 @@ final class RunMigrations extends Command\Command
 				try {
 					$this->psql->sql((string) $pathname);
 					$output->writeln('<info>OK</info>');
-				} catch (\RuntimeException $e) {
+				} catch (\Throwable $e) {
 					$output->writeln('<fg=red>FAIL</>');
 					$output->writeln($e->getMessage(), Output\OutputInterface::VERBOSITY_VERBOSE);
 					return 1;

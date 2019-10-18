@@ -4,6 +4,8 @@ namespace PmgDev\Migrations;
 
 use h4kuna\Memoize\MemoryStorage;
 use Nette\Neon\Neon;
+use PmgDev\Migrations\Exceptions\InvalidConfigFormatException;
+use PmgDev\Migrations\Exceptions\ReadWriteException;
 
 final class Config
 {
@@ -48,11 +50,11 @@ final class Config
 	private static function load(?string $filename): array
 	{
 		if ($filename === NULL || $filename === '') {
-			throw new \RuntimeException('Config must be specified');
+			throw new ReadWriteException('Config must be specified');
 		}
 		$content = @file_get_contents($filename);
 		if ($content === FALSE) {
-			throw new \RuntimeException(sprintf('Config "%s" is not readable.', $filename));
+			throw new ReadWriteException(sprintf('Config "%s" is not readable.', $filename));
 		}
 		return Neon::decode($content) ?? [];
 	}
@@ -61,19 +63,19 @@ final class Config
 	private static function validate(array $parameters): array
 	{
 		if (!is_dir($parameters['projectDir'])) {
-			throw new \RuntimeException(sprintf('projectDir "%s" does not exist', $parameters['projectDir']));
+			throw new InvalidConfigFormatException(sprintf('projectDir "%s" does not exist', $parameters['projectDir']));
 		}
 		if (!is_dir($parameters['migrationsDir'])) {
-			throw new \RuntimeException(sprintf('migrationsDir "%s" does not exist', $parameters['migrationsDir']));
+			throw new InvalidConfigFormatException(sprintf('migrationsDir "%s" does not exist', $parameters['migrationsDir']));
 		}
 		if (!is_file($parameters['sqlUtility'])) {
-			throw new \RuntimeException(sprintf('sqlUtility "%s" does not exist', $parameters['sqlUtility']));
+			throw new InvalidConfigFormatException(sprintf('sqlUtility "%s" does not exist', $parameters['sqlUtility']));
 		}
 		if (!is_file($parameters['dumpUtility'])) {
-			throw new \RuntimeException(sprintf('dumpUtility "%s" does not exist', $parameters['dumpUtility']));
+			throw new InvalidConfigFormatException(sprintf('dumpUtility "%s" does not exist', $parameters['dumpUtility']));
 		}
 		if (!is_file($parameters['structureFilename'])) {
-			throw new \RuntimeException(sprintf('structureFilename "%s" does not exist', $parameters['structureFilename']));
+			throw new InvalidConfigFormatException(sprintf('structureFilename "%s" does not exist', $parameters['structureFilename']));
 		}
 		return $parameters;
 	}
