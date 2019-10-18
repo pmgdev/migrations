@@ -28,7 +28,7 @@
     ],
     "require": {
         "php": ">=7.3",
-        "symfony/console": "^4.3",
+        "symfony/console": "^4.0",
         "nette/utils": "^2.4|^3.0",
         "h4kuna/memoize": "^0.0.1",
         "nette/neon": "^2.4|^3.0",
