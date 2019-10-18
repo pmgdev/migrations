@@ -21,7 +21,7 @@ final class RunMigrations extends Command\Command
 
 	public function __construct()
 	{
-		parent::__construct('list');
+		parent::__construct('run');
 	}
 
 
