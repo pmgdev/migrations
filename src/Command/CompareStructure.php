@@ -60,9 +60,8 @@ final class CompareStructure extends Command\Command
 	{
 		/** @var string $configOption */
 		$configOption = $input->getOption('config');
-		$config = new Config($configOption);
-		$factory = new Factory($config);
-		['structureFilename' => $this->structureFilename, 'migrationsDir' => $this->migrationsDir] = $config->parameters();
+		$factory = new Factory(new Config($configOption));
+		['structureFilename' => $this->structureFilename, 'migrationsDir' => $this->migrationsDir] = $factory->getParameters();
 		$this->git = $factory->createGit();
 		$this->psql = $factory->createPsql();
 

@@ -39,9 +39,8 @@ final class CreateMigration extends Command\Command
 	{
 		/** @var string $configOption */
 		$configOption = $input->getOption('config');
-		$config = new Config($configOption);
-		$factory = new Factory($config);
-		['migrationsDir' => $this->migrationsDir] = $config->parameters();
+		$factory = new Factory(new Config($configOption, ['projectDir', 'migrationsDir']));
+		['migrationsDir' => $this->migrationsDir] = $factory->getParameters();
 		$this->git = $factory->createGit();
 
 		/** @var string $name */

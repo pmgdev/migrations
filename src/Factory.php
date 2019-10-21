@@ -7,16 +7,12 @@ use PmgDev\GitCli;
 
 final class Factory
 {
-	/** @var Config */
-	private $config;
-
 	/** @var mixed[] */
 	private $parameters;
 
 
 	public function __construct(Config $config)
 	{
-		$this->config = $config;
 		$this->parameters = $config->parameters();
 	}
 
@@ -34,6 +30,12 @@ final class Factory
 	public function createGit(): GitCli\Command
 	{
 		return new GitCli\Command($this->parameters['projectDir']);
+	}
+
+
+	public function getParameters(): array
+	{
+		return $this->parameters;
 	}
 
 }

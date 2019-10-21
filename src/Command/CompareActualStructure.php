@@ -40,9 +40,8 @@ final class CompareActualStructure extends Command\Command
 	{
 		/** @var string $configOption */
 		$configOption = $input->getOption('config');
-		$config = new Config($configOption);
-		$factory = new Factory($config);
-		['updateScript' => $updateScript, 'credentials' => ['test' => $testDb]] = $config->parameters();
+		$factory = new Factory(new Config($configOption));
+		['updateScript' => $updateScript, 'credentials' => ['test' => $testDb]] = $factory->getParameters();
 
 		Utils\FileSystem::createDir($this->tempDir);
 

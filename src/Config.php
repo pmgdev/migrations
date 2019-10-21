@@ -14,10 +14,14 @@ final class Config
 	/** @var string|NULL */
 	private $filename;
 
+	/** @var mixed[]|NULL */
+	private $required;
 
-	public function __construct(?string $filename)
+
+	public function __construct(?string $filename, ?array $required = NULL)
 	{
 		$this->filename = $filename;
+		$this->required = $required;
 	}
 
 
@@ -25,7 +29,7 @@ final class Config
 	{
 		return $this->memoize([__FUNCTION__, $this->filename], function (): array {
 			['parameters' => $parameters] = self::merge($this->filename);
-			return self::validate($parameters);
+			return self::validate($parameters, $this->required === NULL ? NULL : array_flip($this->required));
 		});
 	}
 
@@ -64,21 +68,22 @@ final class Config
 	}
 
 
-	private static function validate(array $parameters): array
+	private static function validate(array $parameters, ?array $required): array
 	{
-		if (!is_dir($parameters['projectDir'])) {
+		$required = $required ?? array_fill_keys(['projectDir', 'migrationsDir', 'sqlUtility', 'dumpUtility', 'structureFilename'], TRUE);
+		if (isset($required['projectDir']) && (!isset($parameters['projectDir']) || !is_dir($parameters['projectDir']))) {
 			throw new InvalidConfigFormatException(sprintf('projectDir "%s" does not exist', $parameters['projectDir']));
 		}
-		if (!is_dir($parameters['migrationsDir'])) {
+		if (isset($required['migrationsDir']) && (!isset($parameters['migrationsDir']) || !is_dir($parameters['migrationsDir']))) {
 			throw new InvalidConfigFormatException(sprintf('migrationsDir "%s" does not exist', $parameters['migrationsDir']));
 		}
-		if (!is_file($parameters['sqlUtility'])) {
+		if (isset($required['sqlUtility']) && (!isset($parameters['sqlUtility']) || !is_file($parameters['sqlUtility']))) {
 			throw new InvalidConfigFormatException(sprintf('sqlUtility "%s" does not exist', $parameters['sqlUtility']));
 		}
-		if (!is_file($parameters['dumpUtility'])) {
+		if (isset($required['dumpUtility']) && (!isset($parameters['dumpUtility']) || !is_file($parameters['dumpUtility']))) {
 			throw new InvalidConfigFormatException(sprintf('dumpUtility "%s" does not exist', $parameters['dumpUtility']));
 		}
-		if (!is_file($parameters['structureFilename'])) {
+		if (isset($required['structureFilename']) && (!isset($parameters['structureFilename']) || !is_file($parameters['structureFilename']))) {
 			throw new InvalidConfigFormatException(sprintf('structureFilename "%s" does not exist', $parameters['structureFilename']));
 		}
 		return $parameters;

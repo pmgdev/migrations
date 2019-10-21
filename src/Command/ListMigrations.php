@@ -36,9 +36,8 @@ final class ListMigrations extends Command\Command
 	{
 		/** @var string $configOption */
 		$configOption = $input->getOption('config');
-		$config = new Config($configOption);
-		$factory = new Factory($config);
-		['migrationsDir' => $this->migrationsDir] = $config->parameters();
+		$factory = new Factory(new Config($configOption, ['migrationsDir', 'sqlUtility', 'dumpUtility']));
+		['migrationsDir' => $this->migrationsDir] = $factory->getParameters();
 		$this->psql = $factory->createPsql();
 
 		$files = $this->getFiles();
