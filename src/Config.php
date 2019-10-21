@@ -56,7 +56,11 @@ final class Config
 		if ($content === FALSE) {
 			throw new ReadWriteException(sprintf('Config "%s" is not readable.', $filename));
 		}
-		return Neon::decode($content) ?? [];
+		$neon = Neon::decode($content) ?? [];
+		$neon['parameters']['credentials'] = $neon['parameters']['credentials'] ?? [];
+		$neon['parameters']['credentials']['main'] = $neon['parameters']['credentials']['main'] ?? [];
+		$neon['parameters']['credentials']['test'] = $neon['parameters']['credentials']['test'] ?? [];
+		return $neon;
 	}
 
 
