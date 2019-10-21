@@ -36,9 +36,9 @@ final class Config
 		$configs = [$main];
 		foreach ($main['includes'] ?? [] as $include) {
 			if (is_file($include)) {
-				$configs[] = self::load($include);
+				$configs[] = self::merge($include);
 			} else if ($filename !== NULL && is_file(dirname($filename) . DIRECTORY_SEPARATOR . $include)) {
-				$configs[] = self::load(dirname($filename) . DIRECTORY_SEPARATOR . $include);
+				$configs[] = self::merge(dirname($filename) . DIRECTORY_SEPARATOR . $include);
 			} else {
 				$configs[] = self::load($include);
 			}
