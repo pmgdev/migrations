@@ -179,18 +179,18 @@ final class CompareStructure extends Command\Command
 
 	private function importMigrationSql(Input\InputInterface $input, Output\OutputInterface $output): void
 	{
-		$sql = '';
+		$completeSql = '';
 		foreach ($this->findFiles($input) as $file) {
 			['SQL' => $sql, 'DML' => $dml] = self::ignoredDml($file);
 
 			$output->writeln(sprintf('Used file%s: %s', $dml === [] ? '' : ' (SQL was removed)', $file));
 			$output->writeln(sprintf('<info>%s</info>', implode(PHP_EOL . PHP_EOL, $dml)), Output\OutputInterface::VERBOSITY_VERBOSE);
+			$completeSql .= $sql;
 		}
-
-		if ($sql !== '') {
+		if ($completeSql !== '') {
 			$migrationFile = $this->tempDir . DIRECTORY_SEPARATOR . self::TEMP_MIGRATION_FILE;
-			if (@file_put_contents($migrationFile, $sql) === FALSE) {
-				throw new ReadWriteException(sprintf('Can not write to %s', $migrationFile));
+			if (@file_put_contents($migrationFile, $completeSql) === FALSE) {
+				throw new ReadWriteException(sprintf('Can not write to "%s".', $migrationFile));
 			}
 			$this->psql->sql($migrationFile, $this->masterConnectionConfig());
 		}
